@@ -6,7 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8001;
 const DBLink = process.env.DBLink;
 console.log(PORT);
 console.log(DBLink);
