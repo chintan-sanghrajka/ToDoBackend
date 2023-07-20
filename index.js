@@ -8,8 +8,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8001;
 const DBLink = process.env.DBLink;
-console.log(PORT);
-console.log(DBLink);
 
 const app = express();
 app.use(express.json());
