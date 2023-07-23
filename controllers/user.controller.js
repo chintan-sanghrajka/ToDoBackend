@@ -1,4 +1,4 @@
-import UserModel from "./../models/user.model";
+import UserModel from "./../models/user.model.js";
 
 export const getUser = async (req, res) => {
   const userName = req.params.username;
@@ -29,7 +29,6 @@ export const addUser = (req, res) => {
     const date = new Date();
     const completedDate =
       date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-    console.log(req.body);
     const { firstName, lastName, userName, emailId, password } = req.body;
     const newUser = new UserModel({
       firstName: firstName,

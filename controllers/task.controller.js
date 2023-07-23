@@ -1,8 +1,7 @@
-import TaskModel from "./../models/task.model";
+import TaskModel from "./../models/task.model.js";
 
 export const getTask = async (req, res) => {
   const taskId = req.params.task_id;
-  //   console.log(taskId);
   try {
     const taskDetails = await TaskModel.find({ _id: taskId });
     res.status(200).json({
@@ -14,42 +13,6 @@ export const getTask = async (req, res) => {
       message: error.message,
     });
   }
-};
-
-export const getUserTask = async (req, res) => {
-  // const userTask = await TaskModel.aggregate([
-  //   {
-  //     $lookup: {
-  //       from: "users",
-  //       localField: "userId",
-  //       foreignField: "_id",
-  //       as: "user",
-  //     },
-  //   },
-  //   { $unwind: "$user" },
-  // ]);
-  // console.log(userTask);
-
-  const { q, page, limit } = req.query;
-  const rgx = (pattern) => new RegExp(`.*${pattern}*.`);
-  const searchRgx = rgx(q);
-
-  let filterConfig = { status: 1 };
-  if (q != undefined) {
-    filterConfig = {
-      ...filterConfig,
-      $or: [
-        { task: { $regex: searchRgx, $options: "i" } },
-        { author: { $regex: searchRgx, $options: "i" } },
-      ],
-    };
-  }
-  const skipno = (Number(page) - 1) * limit;
-  const product_data = await TaskModel.find(filterConfig)
-    .populate("userId")
-    .limit(limit)
-    .skip(skipno);
-  // console.log(product_data);
 };
 
 export const addTask = (req, res) => {
@@ -79,22 +42,17 @@ export const addTask = (req, res) => {
 export const getTaskList = async (req, res) => {
   try {
     const { statusId, userId, page, limit } = req.query;
-    console.log(statusId, userId);
-    console.log(page);
-    const skipNo = Number(page) === 1 ? 0 : (Number(page) - 1) * limit - 1;
-    console.log(skipNo);
+    const skipNo = Number(page) === 1 ? 0 : (Number(page) - 1) * limit;
     const tasks = await TaskModel.find({
       status: statusId,
       userId: userId,
     });
-    // console.log(tasks.length);
     const taskDetails = await TaskModel.find({
       status: statusId,
       userId: userId,
     })
       .limit(limit)
       .skip(skipNo);
-    // console.log(taskDetails, tasks.length);
     res.status(200).json({
       data: taskDetails,
       taskLength: tasks.length,
@@ -110,7 +68,6 @@ export const getTaskList = async (req, res) => {
 export const completeTask = async (req, res) => {
   try {
     const taskId = req.params.task_id;
-    // console.log(taskId);
     const date = new Date();
     const completedDate =
       date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
@@ -133,7 +90,6 @@ export const completeTask = async (req, res) => {
 export const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.task_id;
-    // console.log(taskId);
     const completed = await TaskModel.updateOne(
       { _id: taskId },
       { $set: { status: 9 } }
