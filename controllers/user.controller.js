@@ -2,10 +2,8 @@ import UserModel from "./../models/user.model.js";
 
 export const getUser = async (req, res) => {
   const userName = req.params.username;
-  //   console.log(userName);
   try {
-    const UserDetails = await UserModel.find({ userName: userName });
-    // console.log(UserDetails.length);
+    const UserDetails = await UserModel.find({ userName: userName, status: 1 });
 
     if (UserDetails.length !== 0) {
       res.status(200).json({
@@ -44,6 +42,30 @@ export const addUser = (req, res) => {
       return res.status(201).json({
         data: newUser,
         message: "User Created Successfully.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+  try {
+    const updatedUser = await UserModel.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          status: 9,
+        },
+      }
+    );
+    if (updatedUser.acknowledged) {
+      return res.status(200).json({
+        message: "User Deleted successfully.",
       });
     }
   } catch (error) {
